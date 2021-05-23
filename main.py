@@ -1,6 +1,4 @@
 import datetime
-import time
-
 from mainwin_ui import *
 from save_ui import *
 from settings_ui import *
@@ -776,6 +774,7 @@ def search_game_saves_folders():
 
 def version_controller(path="config.ini"):
     up_1_0_4(path)
+    up_1_1_0()
 
 
 def up_1_0_4(path):
@@ -797,6 +796,10 @@ def up_1_0_4(path):
             set_option(path, "Settings", "how_to_save_folder", r"1")
             set_option(path, "Settings", "version", version)
             set_option(path, "Settings", "first_run", '1')
+
+
+def up_1_1_0():
+    pass
 
 
 def main_win_start():
