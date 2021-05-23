@@ -88,7 +88,7 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             def select_acc():
                 for _clb in self.ui.sAWC_folders.children():
-                    if _clb.objectName() != 'vL_sAWC':
+                    if _clb.objectName().startswith("clb_"):
                         if _clb.isChecked():
                             set_option(self.conf_path, "Settings", "account", _clb.objectName()[4:])
                             self.account = _clb.objectName()[4:]
@@ -176,21 +176,53 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def but_func_inst(self):
         def load_save_ui():
+            def saves_loader():
+                def save_name_load():
+                    for i in self.ui_save.sAWC_saves.children():
+                        if i.objectName().startswith("clb_") and i.isChecked():
+                            self.ui_save.lineEdit_name_saves.setText(i.objectName().replace("clb_", ""))
+                for clb in self.ui_save.sAWC_folders.children():
+                    if clb.objectName().startswith("clb_") and clb.isChecked():
+                        listdir = os.listdir(
+                            r"{}\Users\{}\AppData\Roaming\DarkSoulsIII\{}\backups/{}/".format(
+                                self.disk_dir,
+                                self.user,
+                                self.account,
+                                clb.objectName().split("_")[-1]))
+
+                        for clb_del in self.ui_save.sAWC_saves.children():
+                            if clb_del.objectName().startswith("clb_"):
+                                clb_del.setAttribute(55, 1)
+                                clb_del.close()
+
+                        for saves in listdir:
+                            save_name = saves.replace(".sl2", "")
+                            s_clb = QtWidgets.QCommandLinkButton(self.ui_save.sAWC_saves)
+                            s_clb.setCheckable(True)
+                            s_clb.setAutoExclusive(True)
+                            s_clb.setObjectName("clb_" + save_name)
+                            self.ui_save.vL_sAWC_saves.addWidget(s_clb)
+                            s_clb.setText(self._translate("MainWindow", save_name))
+                            s_clb.clicked.connect(lambda: save_name_load())
+
+                        break
+
             def folder_loader_for_load_save_ui():
-                for clb in self.ui_save.sAWC.children():
-                    if clb.objectName() != 'vL_sAWC':
+                for clb in self.ui_save.sAWC_folders.children():
+                    if clb.objectName().startswith("clb_"):
                         clb.setAttribute(55, 1)
                         clb.close()
                 listdir = os.listdir(r"{}\Users\{}\AppData\Roaming\DarkSoulsIII\{}\backups/".format(self.disk_dir,
                                                                                                     self.user,
                                                                                                     self.account))
                 for folder in listdir:
-                    clb = QtWidgets.QCommandLinkButton(self.ui_save.sAWC)
+                    clb = QtWidgets.QCommandLinkButton(self.ui_save.sAWC_folders)
                     clb.setCheckable(True)
                     clb.setAutoExclusive(True)
                     clb.setObjectName("clb_" + folder)
-                    self.ui_save.vL_sAWC.addWidget(clb)
+                    self.ui_save.vL_sAWC_folders.addWidget(clb)
                     clb.setText(self._translate("MainWindow", folder))
+                    clb.clicked.connect(lambda: saves_loader())
 
             self.ui.tabWidget.hide()
             self.ui.widget_for_btn.hide()
@@ -207,14 +239,14 @@ class MainWindow(QtWidgets.QMainWindow):
         def check_box_change():
             if self.ui_save.checkBox_create_new_folder.isChecked():
                 self.ui_save.label_selected_folder.setEnabled(0)
-                self.ui_save.scrollArea_saves.setEnabled(0)
+                self.ui_save.scrollArea_saves_folders.setEnabled(0)
                 self.ui_save.label_name_folder.setEnabled(1)
                 self.ui_save.lineEdit_name_folder.setEnabled(1)
             else:
                 self.ui_save.label_name_folder.setEnabled(0)
                 self.ui_save.lineEdit_name_folder.setEnabled(0)
                 self.ui_save.label_selected_folder.setEnabled(1)
-                self.ui_save.scrollArea_saves.setEnabled(1)
+                self.ui_save.scrollArea_saves_folders.setEnabled(1)
 
         def save_my_save():
             def check_save_this(status_folder_match, folder):
@@ -332,7 +364,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             else:
                 checked_folder = ''
-                for i in self.ui_save.sAWC.children():
+                for i in self.ui_save.sAWC_folders.children():
                     if 'clb_' in i.objectName() and i.isChecked():
                         checked_folder = i.objectName()
                 if self.ui_save.lineEdit_name_saves.text() == '':
@@ -429,7 +461,7 @@ class MainWindow(QtWidgets.QMainWindow):
         def select_account():
             def select_acc():
                 for _clb in self.ui.sAWC_folders.children():
-                    if _clb.objectName() != 'vL_sAWC':
+                    if _clb.objectName().startswith("clb_"):
                         if _clb.isChecked():
                             set_option(self.conf_path, "Settings", "account", _clb.objectName()[4:])
                             self.account = _clb.objectName()[4:]
@@ -780,7 +812,7 @@ def main():
 
 if __name__ == "__main__":
     conf_path = "config.ini"
-    version = "1.1.0"
+    version = "1.1.115"
     version_controller(conf_path)
     if not os.path.exists(conf_path):
         create_new_config(conf_path)
