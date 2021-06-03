@@ -1,13 +1,14 @@
 import datetime
+import shutil
+import configparser as cp
+import os
+import sys
+import res
+from PyQt5.QtWidgets import QMessageBox
 from mainwin_ui import *
 from save_ui import *
 from settings_ui import *
 from save_over_ui import *
-import configparser as cp
-import os
-import sys
-from PyQt5.QtWidgets import QMessageBox
-import shutil
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -46,7 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def loader_for_start(self):
         self.ui.icon = QtGui.QIcon()
-        self.ui.icon.addPixmap(QtGui.QPixmap("ico.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.ui.icon.addPixmap(QtGui.QPixmap(":/ico.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.setWindowIcon(self.ui.icon)
         self.ui.label_current_save.setText("Current Save: " +
                                            get_option(self.conf_path, self.account, "current_save").split("||||")[0] +
@@ -621,7 +622,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.pushButton_select_save.clicked.connect(lambda: load_save())
         self.ui.settings.triggered.connect(lambda: self.settings_window())
 
-    def settings_window(self, war_icon="ico.ico"):
+    def settings_window(self, war_icon=":/ico.ico"):
         def set_how_to_save(setting):
             set_option(self.conf_path, "Settings", "how_to_save", setting)
             self.how_to_save = setting
@@ -661,7 +662,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         set_win.exec_()
 
-    def save_over_window(self, question, war_icon="ico.ico"):
+    def save_over_window(self, question, war_icon=":/ico.ico"):
         def func_set_ask():
             self.ask_over_save_status = True
             set_win.close()
@@ -679,7 +680,7 @@ class MainWindow(QtWidgets.QMainWindow):
         set_win.exec_()
 
 
-def set_doc_warning(war_name, war_text, war_icon="ico.ico"):
+def set_doc_warning(war_name, war_text, war_icon=":/ico.ico"):
     _set_doc_warning = QMessageBox()
     _set_doc_warning.setWindowTitle(war_name)
     _set_doc_warning.setText(war_text)
