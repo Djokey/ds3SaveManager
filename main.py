@@ -271,6 +271,18 @@ class MainWindow(QtWidgets.QMainWindow):
                                                                                               self.user,
                                                                                               self.account)):
                         if _over:
+                            if os.path.exists(
+                                    r"{}\Users\{}\AppData\Roaming\DarkSoulsIII\{}\backups/backups".format(self.disk_dir,
+                                                                                                          self.user,
+                                                                                                          self.account,
+                                                                                                          )):
+                                pass
+                            else:
+                                os.mkdir(
+                                    r"{}\Users\{}\AppData\Roaming\DarkSoulsIII\{}\backups/backups".format(self.disk_dir,
+                                                                                                          self.user,
+                                                                                                          self.account,
+                                                                                                          ))
                             shutil.copy2(
                                 r"{}\Users\{}\AppData\Roaming\DarkSoulsIII\{}\backups\{}\{}.sl2".format(
                                     self.disk_dir,
@@ -776,6 +788,7 @@ def search_game_saves_folders():
 def version_controller(path="config.ini"):
     up_1_0_4(path)
     up_1_1_0()
+    up_1_1_115()
 
 
 def up_1_0_4(path):
@@ -803,6 +816,10 @@ def up_1_1_0():
     pass
 
 
+def up_1_1_115():
+    pass
+
+
 def main_win_start():
     app = QtWidgets.QApplication([])
     application = MainWindow()
@@ -816,7 +833,7 @@ def main():
 
 if __name__ == "__main__":
     conf_path = "config.ini"
-    version = "1.1.115"
+    version = "1.2.0"
     version_controller(conf_path)
     if not os.path.exists(conf_path):
         create_new_config(conf_path)
