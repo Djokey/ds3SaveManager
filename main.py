@@ -841,7 +841,7 @@ def main():
 
 if __name__ == "__main__":
     conf_path = "config.ini"
-    version = "1.2.0"
+    version = "1.3.0"
     version_controller(conf_path)
     if not os.path.exists(conf_path):
         create_new_config(conf_path)
