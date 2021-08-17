@@ -81,9 +81,23 @@ class MainWindow(QtWidgets.QMainWindow):
                 tab.setObjectName('tab_' + collect_build)
                 vL_tab = QtWidgets.QVBoxLayout(tab)
                 vL_tab.setObjectName("vL_tab_" + collect_build)
+                vL_tab.setContentsMargins(0, 0, 0, 0)
                 tab_parent.addTab(tab, "")
                 tab_parent.setTabText(tab_parent.indexOf(tab), self._translate("MainWindow", collect_build))
-                self.clb_loader(collect_build, tab, vL_tab)
+
+                scrollA_tab = QtWidgets.QScrollArea(tab)
+                scrollA_tab.setAutoFillBackground(False)
+                scrollA_tab.setWidgetResizable(True)
+                scrollA_tab.setObjectName("scrollA_tab_" + collect_build)
+                sAWContent_tab = QtWidgets.QWidget()
+                sAWContent_tab.setGeometry(QtCore.QRect(0, 0, 466, 484))
+                sAWContent_tab.setObjectName("sAWContent_tab" + collect_build)
+                vL_sAWContent_tab = QtWidgets.QVBoxLayout(sAWContent_tab)
+                vL_sAWContent_tab.setObjectName("vL_sAWContent_tab" + collect_build)
+                scrollA_tab.setWidget(sAWContent_tab)
+                vL_tab.addWidget(scrollA_tab)
+
+                self.clb_loader(collect_build, scrollA_tab, vL_sAWContent_tab)
         else:
             def select_acc():
                 for _clb in self.ui.sAWC_folders.children():
@@ -155,23 +169,15 @@ class MainWindow(QtWidgets.QMainWindow):
         listdir = os.listdir(r"{}\Users\{}\AppData\Roaming\DarkSoulsIII\{}\backups/".format(self.disk_dir,
                                                                                             self.user,
                                                                                             self.account) + collect)
-        if parent.objectName() != 'tab_backups':
-            for build in listdir:
-                clb = QtWidgets.QCommandLinkButton(parent)
-                clb.setCheckable(True)
-                clb.setAutoExclusive(True)
-                clb.setObjectName("clb_" + build[:-4])
-                layout_parent.addWidget(clb)
-                clb.setText(self._translate("MainWindow", build[:-4]))
-        else:
+        if collect == 'backups':
             listdir.reverse()
-            for build in listdir:
-                clb = QtWidgets.QCommandLinkButton(parent)
-                clb.setCheckable(True)
-                clb.setAutoExclusive(True)
-                clb.setObjectName("clb_" + build[:-4])
-                layout_parent.addWidget(clb)
-                clb.setText(self._translate("MainWindow", build[:-4]))
+        for build in listdir:
+            clb = QtWidgets.QCommandLinkButton(parent)
+            clb.setCheckable(True)
+            clb.setAutoExclusive(True)
+            clb.setObjectName("clb_" + build[:-4])
+            layout_parent.addWidget(clb)
+            clb.setText(self._translate("MainWindow", build[:-4]))
 
     def but_func_inst(self):
         def load_save_ui():
@@ -551,7 +557,9 @@ class MainWindow(QtWidgets.QMainWindow):
         def load_save():
             status_save_checked = 0
             if isinstance(self.ui.tabWidget.currentWidget(), QtWidgets.QWidget):
-                for i in self.ui.tabWidget.currentWidget().children():
+                for i in self.ui.tabWidget.currentWidget().findChild(
+                        QtWidgets.QWidget, "sAWContent_tab" + self.ui.tabWidget.currentWidget().objectName().replace("tab_", "")
+                ).children():
                     if 'clb_' in i.objectName() and i.isChecked():
                         status_save_checked = 1
                         if os.path.exists(
